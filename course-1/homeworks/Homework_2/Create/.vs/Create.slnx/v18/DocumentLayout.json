@@ -1,9 +1,9 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "D:\\VisualStudio Projects\\Create\\",
+  "WorkspaceRootPath": "C:\\portfolio\\course-1\\homeworks\\Homework 2\\Create\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{1E1DBE98-6756-74FF-489B-9FAB2331E8A9}|Create.csproj|d:\\visualstudio projects\\create\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{1E1DBE98-6756-74FF-489B-9FAB2331E8A9}|Create.csproj|c:\\portfolio\\course-1\\homeworks\\homework 2\\create\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1E1DBE98-6756-74FF-489B-9FAB2331E8A9}|Create.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
@@ -20,11 +20,11 @@
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "Program.cs",
-              "DocumentMoniker": "D:\\VisualStudio Projects\\Create\\Program.cs",
+              "DocumentMoniker": "C:\\portfolio\\course-1\\homeworks\\Homework 2\\Create\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",
-              "ToolTip": "D:\\VisualStudio Projects\\Create\\Program.cs*",
-              "RelativeToolTip": "Program.cs*",
-              "ViewState": "AgIAABQAAAAAAAAAAAAwwDUAAAASAAAAAAAAAA==",
+              "ToolTip": "C:\\portfolio\\course-1\\homeworks\\Homework 2\\Create\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAABwAAAAAAAAAAAAYwDUAAAASAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-11-27T12:59:47.063Z",
               "EditorCaption": ""

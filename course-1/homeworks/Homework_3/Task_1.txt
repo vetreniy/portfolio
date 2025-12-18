@@ -1,0 +1,43 @@
+using System;
+
+namespace ConsoleApp1;
+
+public class Movie
+{
+    public string Title { get; set; }
+    public string Genre { get; set; }
+    public double Rating { get; set; }
+
+    public Movie() : this("Без названия", "Неизвестен", 0)
+    {
+    }
+    public Movie(string title) : this(title, "Неизвестен", 0)
+    {
+    }
+
+    public Movie(string title, string genre, double rating)
+    {
+        Title = title;
+        Genre = genre;
+        Rating = rating;
+    }
+
+    public void PrintInfo()
+    {
+        Console.WriteLine($"Название: {Title}, жанр: {Genre}, рейтинг: {Rating}");
+    }
+}
+
+public class Program
+{
+    public static void Main()
+    {
+        var m1 = new Movie();
+        var m2 = new Movie("Матрица");
+        var m3 = new Movie("Начало", "Фантастика", 9);
+
+        m1.PrintInfo();
+        m2.PrintInfo();
+        m3.PrintInfo();
+    }
+}

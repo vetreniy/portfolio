@@ -1,0 +1,14 @@
+using System;
+using System.Linq;
+using System.Collections.Generic;
+
+var words = new List<string> { "апельсин", "Арбуз", "ананас", "банан", "абрикос", "груша", "Авокадо", "арбуз" };
+
+var result = words
+    .Where(w => w.StartsWith("а", StringComparison.OrdinalIgnoreCase))
+    .Select(w => w.ToUpperInvariant())
+    .Distinct()
+    .OrderBy(w => w.Length)
+    .ThenBy(w => w);
+
+Console.WriteLine(string.Join(", ", result));

@@ -1,0 +1,145 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json;
+
+public class Author
+{
+    public string Name { get; set; }
+    public string Country { get; set; }
+}
+
+public class Book
+{
+    public string Title { get; set; }
+    public string Author { get; set; }
+    public int Year { get; set; }
+    public decimal Price { get; set; }
+    public List<string> Tags { get; set; }
+}
+
+class Program
+{
+    static void Main()
+    {
+        string authorsJson = @"
+        [
+            { ""name"": ""Лев Толстой"", ""country"": ""Россия"" },
+            { ""name"": ""Джордж Оруэлл"", ""country"": ""Великобритания"" },
+            { ""name"": ""Харуки Мураками"", ""country"": ""Япония"" }
+        ]";
+
+        string booksJson = @"
+        [
+            { ""title"": ""Война и мир"", ""author"": ""Лев Толстой"", ""year"": 1869, ""price"": 1200, ""tags"": [""классика"",""роман""] },
+            { ""title"": ""1984"", ""author"": ""Джордж Оруэлл"", ""year"": 1949, ""price"": 700, ""tags"": [""антиутопия"",""классика""] },
+            { ""title"": ""Норвежский лес"", ""author"": ""Харуки Мураками"", ""year"": 1987, ""price"": 900, ""tags"": [""роман"",""современная""] },
+            { ""title"": ""Кафка на пляже"", ""author"": ""Харуки Мураками"", ""year"": 2002, ""price"": 1100, ""tags"": [""роман"",""магреализм""] }
+        ]";
+
+        var options = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true,
+            WriteIndented = true
+        };
+
+        List<Author> authors = JsonSerializer.Deserialize<List<Author>>(authorsJson, options);
+        List<Book> books = JsonSerializer.Deserialize<List<Book>>(booksJson, options);
+
+        Console.WriteLine($"Загружено {authors.Count} авторов и {books.Count} книг\n");
+
+        Console.WriteLine("Авторы:");
+        foreach (var author in authors)
+        {
+            Console.WriteLine($"- {author.Name} ({author.Country})");
+        }
+
+        Console.WriteLine("\nКниги:");
+        foreach (var book in books)
+        {
+            Console.WriteLine($"- {book.Title}");
+            Console.WriteLine($"  Автор: {book.Author}, Год: {book.Year}, Цена: {book.Price} руб.");
+            Console.WriteLine($"  Теги: {string.Join(", ", book.Tags)}");
+            Console.WriteLine();
+        }
+
+        Console.WriteLine("Книги по авторам:");
+        foreach (var author in authors)
+        {
+            var authorBooks = books.Where(b => b.Author == author.Name).ToList();
+            if (authorBooks.Any())
+            {
+                Console.WriteLine($"\n{author.Name} ({author.Country}):");
+                foreach (var book in authorBooks)
+                {
+                    Console.WriteLine($"  - {book.Title} ({book.Year})");
+                }
+            }
+        }
+
+        Console.WriteLine(' ');
+        var romanceBooks = books.Where(b => b.Tags.Contains("роман"));
+        foreach (var book in romanceBooks)
+        {
+            Console.WriteLine($"- {book.Title} ({book.Author}, {book.Year})");
+        }
+
+        Console.WriteLine(' ');
+        var avgPriceByAuthor = books
+            .GroupBy(b => b.Author)
+            .Select(g => new { Author = g.Key, AvgPrice = g.Average(b => b.Price) });
+
+        foreach (var item in avgPriceByAuthor)
+        {
+            Console.WriteLine($"{item.Author}: {item.AvgPrice:F2} руб.");
+        }
+
+        Console.WriteLine(' ');
+        var top3OldBooks = books
+            .Where(b => b.Year <= 1950)
+            .OrderByDescending(b => b.Price)
+            .Take(3)
+            .Select(b => $"{b.Title} ({b.Year}) — {b.Price} руб.");
+
+        foreach (var item in top3OldBooks)
+        {
+            Console.WriteLine($"- {item}");
+        }
+
+        Console.WriteLine(' ');
+        var booksWithPrice = books
+            .OrderBy(b => b.Title)
+            .Select(b => $"{b.Title} ({b.Year}) — {b.Price} руб.");
+
+        foreach (var item in booksWithPrice)
+        {
+            Console.WriteLine($"- {item}");
+        }
+
+        Console.WriteLine(' ');
+        var booksWithCountries = books.Join(
+            authors,
+            book => book.Author,
+            author => author.Name,
+            (book, author) => new { book.Title, AuthorName = author.Name, author.Country }
+        )
+        .OrderBy(x => x.AuthorName)
+        .Select(x => $"{x.Title} — {x.AuthorName} ({x.Country})");
+
+        foreach (var item in booksWithCountries)
+        {
+            Console.WriteLine($"- {item}");
+        }
+
+        Console.WriteLine(' ');
+        var uniqueTags = books
+            .SelectMany(b => b.Tags)
+            .Distinct()
+            .OrderBy(tag => tag);
+
+        foreach (var tag in uniqueTags)
+        {
+            Console.WriteLine($"- {tag}");
+        }
+    }
+}

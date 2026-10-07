@@ -1,0 +1,334 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+public class PublishingHouse
+{
+    public string Name { get; set; }
+    public PublishingHouse(string name)
+    {
+        Name = name;
+    }
+    public void ShowInfo()
+    {
+        Console.WriteLine($"Издательство: {Name}");
+    }
+}
+
+public abstract class Publication
+{
+    public string Title { get; protected set; }
+    public string Author { get; protected set; }
+
+    public Publication(string title, string author)
+    {
+        Title = title;
+        Author = author;
+    }
+
+    public abstract string GetInformation();
+}
+
+public class Book : Publication
+{
+    public int Year { get; private set; }
+    public int Pages { get; private set; }
+
+    public Book(string title, string author, int year, int pages)
+    : base(title, author)
+    {
+        Year = year;
+        Pages = pages;
+    }
+
+    public override string GetInformation()
+    {
+        return $"[Книга] \"{Title}\", автор: {Author} ({Year} г., {Pages} стр.)";
+    }
+
+    public virtual void PrintInfo()
+    {
+        Console.WriteLine(GetInformation());
+    }
+}
+
+public class TextBook : Book
+{
+    public string Subject { get; set; }
+    public TextBook(string title, string author, int year, int pages, string subject) : base(title, author, year, pages)
+    {
+        Subject = subject;
+    }
+
+    public override void PrintInfo()
+    {
+        Console.WriteLine($"Учебник: {Title}, Предмет: {Subject}, Автор: {Author}, Год: {Year}, Страниц: {Pages}");
+    }
+}
+
+public class FictionBook : Book
+{
+    public string Genre { get; set; }
+
+    public FictionBook(string title, string author, int year, int pages, string genre)
+    : base(title, author, year, pages)
+    {
+        Genre = string.IsNullOrWhiteSpace(genre) ? "Проза" : genre;
+    }
+
+    public override void PrintInfo()
+    {
+        Console.WriteLine($" Художественная литература ({Genre}): \"{Title}\", {Author}");
+    }
+}
+
+public class Reader
+{
+    public string Name { get; private set; }
+    public int ID { get; private set; }
+    public List<Book> BorrowedBooks { get; private set; }
+
+    public Reader(string name, int id)
+    {
+        Name = name;
+        ID = id;
+        BorrowedBooks = new List<Book>();
+    }
+
+    public void TakeBook(Book book)
+    {
+        if (book == null) return;
+
+        BorrowedBooks.Add(book);
+        Console.WriteLine($"{Name} (ID: {ID}) взял(а) книгу: \"{book.Title}\"");
+    }
+
+    public void ShowMyBooks()
+    {
+        Console.WriteLine($"\nКниги у читателя {Name}:");
+        if (BorrowedBooks.Count == 0) Console.WriteLine("Список пуст.");
+        foreach (var book in BorrowedBooks)
+        {
+            book.PrintInfo();
+        }
+    }
+}
+
+public class Reservation
+{
+    public Book Book { get; private set; }
+    public Reader Reader { get; private set; }
+    public DateTime ReservationDate { get; private set; }
+    public DateTime ExpiryDate { get; private set; }
+    
+    public Reservation(Book book, Reader reader, DateTime reservationDate, int reservationDays)
+    {
+        Book = book;
+        Reader = reader;
+        ReservationDate = reservationDate;
+        ExpiryDate = reservationDate.AddDays(reservationDays);
+    }
+    
+    public bool IsExpired()
+    {
+        return DateTime.Now > ExpiryDate;
+    }
+    
+    public void PrintInfo()
+    {
+        Console.WriteLine($"Резерв: Книга \"{Book.Title}\", Читатель: {Reader.Name}, " +
+                         $"Дата резерва: {ReservationDate:dd.MM.yyyy}, " +
+                         $"Действителен до: {ExpiryDate:dd.MM.yyyy}, " +
+                         $"Статус: {(IsExpired() ? "ПРОСРОЧЕН" : "Активен")}");
+    }
+}
+
+public interface ILibraryManagement
+{
+    void AddBook(Book book);
+    bool RemoveBook(string title);
+    Book FindBook(string title);
+    void ShowAllBooks();
+}
+
+public class Library : ILibraryManagement
+{
+    private List<Book> _books = new List<Book>();
+    private List<Reservation> _reservations = new List<Reservation>();
+    
+    public void AddBook(Book book) => _books.Add(book);
+
+    public bool RemoveBook(string title)
+    {
+        var book = FindBook(title);
+        return book != null && _books.Remove(book);
+    }
+
+    public Book FindBook(string title) =>
+        _books.FirstOrDefault(b => b.Title.Equals(title, StringComparison.OrdinalIgnoreCase));
+
+    public void ShowAllBooks()
+    {
+        Console.WriteLine("\n--- Весь каталог библиотеки ---");
+        _books.ForEach(b => b.PrintInfo());
+    }
+    
+    public bool ReserveBook(Reader reader, string title, int reservationDays = 7)
+    {
+        var book = FindBook(title);
+        if (book == null)
+        {
+            Console.WriteLine($"Ошибка: Книга \"{title}\" не найдена в фонде.");
+            return false;
+        }
+        
+        var existingReservation = _reservations.FirstOrDefault(r => 
+            r.Book.Title.Equals(title, StringComparison.OrdinalIgnoreCase) && 
+            !r.IsExpired() && 
+            r.Reader.ID != reader.ID);
+        
+        if (existingReservation != null)
+        {
+            Console.WriteLine($"Ошибка: Книга \"{title}\" уже зарезервирована читателем {existingReservation.Reader.Name}.");
+            return false;
+        }
+        
+        var oldReservations = _reservations.Where(r => 
+            r.Book.Title.Equals(title, StringComparison.OrdinalIgnoreCase) && 
+            r.Reader.ID == reader.ID).ToList();
+        
+        foreach (var oldRes in oldReservations)
+        {
+            _reservations.Remove(oldRes);
+        }
+        
+        var reservation = new Reservation(book, reader, DateTime.Now, reservationDays);
+        _reservations.Add(reservation);
+        
+        Console.WriteLine($"{reader.Name} зарезервировал(а) книгу \"{title}\" до {reservation.ExpiryDate:dd.MM.yyyy}");
+        return true;
+    }
+    
+    public bool CancelReservation(string title, int readerId)
+    {
+        var reservation = _reservations.FirstOrDefault(r => 
+            r.Book.Title.Equals(title, StringComparison.OrdinalIgnoreCase) && 
+            r.Reader.ID == readerId);
+        
+        if (reservation == null)
+        {
+            Console.WriteLine($"Ошибка: Резервирование книги \"{title}\" для читателя с ID {readerId} не найдено.");
+            return false;
+        }
+        
+        _reservations.Remove(reservation);
+        Console.WriteLine($"Резервирование книги \"{title}\" для читателя {reservation.Reader.Name} отменено.");
+        return true;
+    }
+    
+    public void ShowAllReservations()
+    {
+        Console.WriteLine("\n--- Все резервирования книг ---");
+        if (_reservations.Count == 0)
+        {
+            Console.WriteLine("Резервирований нет.");
+            return;
+        }
+        
+        foreach (var reservation in _reservations)
+        {
+            reservation.PrintInfo();
+        }
+    }
+    
+    public void IssueBook(Reader reader, string title)
+    {
+        var book = FindBook(title);
+        if (book == null)
+        {
+            Console.WriteLine($"Ошибка: Книга \"{title}\" не найдена в фонде.");
+            return;
+        }
+        
+        var activeReservation = _reservations.FirstOrDefault(r => 
+            r.Book.Title.Equals(title, StringComparison.OrdinalIgnoreCase) && 
+            !r.IsExpired() && 
+            r.Reader.ID != reader.ID);
+        
+        if (activeReservation != null)
+        {
+            Console.WriteLine($"Ошибка: Книга \"{title}\" зарезервирована читателем {activeReservation.Reader.Name} до {activeReservation.ExpiryDate:dd.MM.yyyy}.");
+            return;
+        }
+        
+        var readerReservation = _reservations.FirstOrDefault(r => 
+            r.Book.Title.Equals(title, StringComparison.OrdinalIgnoreCase) && 
+            r.Reader.ID == reader.ID);
+        
+        if (readerReservation != null)
+        {
+            _reservations.Remove(readerReservation);
+        }
+        
+        _books.Remove(book);
+        reader.TakeBook(book);
+    }
+    
+    public void ReturnBook(Reader reader, string title)
+    {
+        var book = reader.BorrowedBooks.FirstOrDefault(b => b.Title.Equals(title, StringComparison.OrdinalIgnoreCase));
+        if (book != null)
+        {
+            reader.BorrowedBooks.Remove(book);
+            _books.Add(book);
+            Console.WriteLine($"{reader.Name} вернул(а) книгу: \"{title}\"");
+        }
+        else
+        {
+            Console.WriteLine($"У читателя {reader.Name} нет книги \"{title}\".");
+        }
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Console.OutputEncoding = System.Text.Encoding.UTF8;
+        Library library = new Library();
+
+        TextBook t1 = new TextBook("Математика 101", "Иванов", 2020, 300, "Математика");
+        FictionBook f1 = new FictionBook("Война и мир", "Толстой", 1869, 1200, "Роман");
+
+        library.AddBook(t1);
+        library.AddBook(f1);
+        
+        library.ShowAllBooks();
+
+        Reader reader1 = new Reader("Алексей", 1);
+        Reader reader2 = new Reader("Мария", 2);
+        
+        library.ReserveBook(reader1, "Война и мир", 5);
+        library.ShowAllReservations();
+        
+        library.IssueBook(reader2, "Война и мир");
+        
+        library.IssueBook(reader1, "Война и мир");
+        
+        reader1.ShowMyBooks();
+        library.ShowAllBooks();
+        library.ShowAllReservations();
+
+        library.ReserveBook(reader2, "Математика 101");
+        library.ShowAllReservations();
+
+        library.CancelReservation("Математика 101", 2);
+        library.ShowAllReservations();
+
+        library.ReturnBook(reader1, "Война и мир");
+        library.ShowAllBooks();
+
+        Publication pub = f1;
+        Console.WriteLine($"\nPub info: {pub.GetInformation()}");
+    }
+}

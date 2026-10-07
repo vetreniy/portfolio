@@ -1,0 +1,45 @@
+using System;
+using System.Diagnostics.CodeAnalysis;
+
+namespace ConsoleApp1;
+
+
+public class Phone
+{
+    public string Model { get; set; }
+
+    private int battery;
+    public int Battery
+    {
+        get => battery;
+        private set => battery = Math.Clamp(value, 0, 100);
+    }
+
+    public void Charge(int amount)
+    {
+        if (amount > 0)
+            Battery += amount;
+    }
+
+    public void Use(int amount)
+    {
+        if (amount > 0)
+            Battery -= amount;
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        var phone = new Phone { Model = "Samsung Galaxy" };
+        phone.Charge(30);
+        Console.WriteLine($"Заряд: {phone.Battery}%");
+
+        phone.Use(10);
+        Console.WriteLine($"Заряд: {phone.Battery}%");
+
+        phone.Charge(150);
+        Console.WriteLine($"Заряд: {phone.Battery}%");
+    }
+}

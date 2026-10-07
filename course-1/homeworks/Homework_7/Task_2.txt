@@ -1,0 +1,49 @@
+using System;
+using System.Diagnostics.CodeAnalysis;
+
+namespace ConsoleApp1;
+
+public abstract class CookingProcess
+{
+    public void Cook()
+    {
+        PrepareIngredients();
+        CookMainProcess();
+        ServeDish();
+    }
+
+    private void PrepareIngredients() =>
+        Console.WriteLine("Подготавливаем ингредиенты");
+
+    protected abstract void CookMainProcess();
+
+    private void ServeDish() =>
+        Console.WriteLine("Подаем готовое блюдо");
+}
+
+public class Okroshka : CookingProcess
+{
+    protected override void CookMainProcess() =>
+        Console.WriteLine("Нарезаем ингредиенты на окрошку");
+}
+
+public class Steak : CookingProcess
+{
+    protected override void CookMainProcess() =>
+        Console.WriteLine("Жарим стейк до готовности");
+}
+
+class Program
+{
+    static void Main()
+    {
+        CookingProcess soup = new Okroshka();
+        CookingProcess steak = new Steak();
+
+        Console.WriteLine("Приготовление окрошки:");
+        soup.Cook();
+
+        Console.WriteLine("\nПриготовление стейка:");
+        steak.Cook();
+    }
+}

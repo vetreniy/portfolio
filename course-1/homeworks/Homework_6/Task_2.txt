@@ -1,0 +1,73 @@
+using System;
+
+namespace ConsoleApp1;
+
+public class Device
+{
+    public string Name { get; set; }
+
+    public void TurnOn()
+    {
+        Console.WriteLine($"{Name} включено.");
+    }
+
+
+    public virtual void Beep()
+    {
+        Console.WriteLine("Устройство подаёт сигнал.");
+    }
+}
+
+public class Kettle : Device
+{
+    public void Boil()
+    {
+        Console.WriteLine($"{Name} кипятит воду.");
+    }
+
+    public override void Beep()
+    {
+        Console.WriteLine($"{Name} пикнул: пи-пи!");
+    }
+}
+
+public class Toaster : Device
+{
+    public void Toast()
+    {
+        Console.WriteLine($"{Name} поджаривает хлеб.");
+    }
+
+    public override void Beep()
+    {
+        Console.WriteLine($"{Name} пикнул: динь!");
+    }
+}
+
+public class Program
+{
+    public static void Main()
+    {
+        var kettle = new Kettle();
+        kettle.Name = "Redmond";
+        kettle.TurnOn();
+        kettle.Boil();
+        kettle.Beep();
+
+        Console.WriteLine();
+
+        var toaster = new Toaster();
+        toaster.Name = "Philips";
+        toaster.TurnOn();
+        toaster.Toast();
+        toaster.Beep();
+
+        Console.WriteLine();
+
+        Device device1 = new Kettle() { Name = "Bosch" };
+        Device device2 = new Toaster() { Name = "Tefal" };
+
+        device1.Beep(); 
+        device2.Beep();
+    }
+}

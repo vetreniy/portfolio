@@ -1,0 +1,17 @@
+using System;
+using System.Linq;
+using System.Collections.Generic;
+
+var students = new List<Student>
+{
+    new("Аня",5), new("Борис",3), new("Вика",4), new("Гена",4), new("Дана",5)
+};
+
+var good = students.Where(s => s.Grade >= 4).OrderBy(s => s.Name).Select(s => s.Name).ToList();
+bool anyBad = students.Any(s => s.Grade < 3);
+bool allOk = students.All(s => s.Grade >= 3);
+
+Console.WriteLine("Хорошисты: " + string.Join(", ", good));
+Console.WriteLine($"Есть ли оценка < 3: {anyBad}, все ли >= 3: {allOk}");
+
+record Student(string Name, int Grade);

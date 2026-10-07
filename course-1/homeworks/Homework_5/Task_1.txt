@@ -1,0 +1,43 @@
+using System;
+using System.Diagnostics.CodeAnalysis;
+
+namespace ConsoleApp1;
+
+
+class Program
+{
+    static void Main()
+    {
+        while (true)
+        {
+            Console.Write("Введите выражение (или exit): ");
+            string s = Console.ReadLine();
+
+            if (s == "exit") break;
+
+            string[] p = s.Split(' ');
+
+            if (p.Length == 3)
+            {
+                double a = double.Parse(p[0]);
+                double b = double.Parse(p[2]);
+                double r = 0;
+
+                if (p[1] == "+") r = Add(a, b);
+                else if (p[1] == "-") r = Subtract(a, b);
+                else if (p[1] == "*") r = Multiply(a, b);
+                else if (p[1] == "/") r = Divide(a, b);
+
+                Console.WriteLine($"Результат: {r}");
+            }
+        }
+
+        Console.WriteLine("Программа завершена");
+    }
+    static double Add(double a, double b) => a + b;
+    static double Subtract(double a, double b) => a - b;
+    static double Multiply(double a, double b) => a * b;
+    static double Divide(double a, double b) => a / b;
+}
+
+//Как сделать так, чтобы при делении на ноль выводилась надпись "на ноль делить нельзя"?

@@ -1,0 +1,21 @@
+using System;
+using System.Linq;
+using System.Collections.Generic;
+
+var scores = new Dictionary<string, int>
+{
+    ["Анна"] = 95,
+    ["Иван"] = 84,
+    ["Олег"] = 91,
+    ["Ольга"] = 91,
+    ["Мария"] = 77
+};
+
+var lines = scores
+    .OrderByDescending(p => p.Value)
+    .ThenBy(p => p.Key)
+    .Select(p => $"{p.Key} -- {p.Value}")
+    .ToList();
+
+lines.ForEach(Console.WriteLine);
+

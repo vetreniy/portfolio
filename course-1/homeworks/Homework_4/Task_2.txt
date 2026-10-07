@@ -1,0 +1,22 @@
+using System;
+using System.Diagnostics.CodeAnalysis;
+
+namespace ConsoleApp1;
+
+class Program
+{
+    static void Main()
+    {
+        int[] num = { 1, 12, 23, 34, 45 };
+        for (int i = 0; i < num.Length; i++)
+        {
+            Console.Write(num[i] + " ");
+        }
+        Console.WriteLine();
+        for (int i = 4; i >= 0; i--)
+        {
+            Console.Write(num[i] + " ");
+        }
+
+    }
+}

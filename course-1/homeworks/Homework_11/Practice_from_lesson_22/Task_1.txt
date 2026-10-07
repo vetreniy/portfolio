@@ -1,0 +1,12 @@
+using System;
+using System.Linq;
+
+int[] nums = { -3, -1, 17773, 2, 4, 5, 6, 10, 12 };
+
+var filtered = nums.Where(n => n > 0 && n % 2 == 0).Select(n => n * n).ToList();
+int count = filtered.Count;
+int sum = filtered.Sum();
+double avg = filtered.Average();
+
+Console.WriteLine($"Квадраты: {string.Join(", ", filtered)}");
+Console.WriteLine($"Count={count}, Sum={sum}, Avg={avg:F2}");

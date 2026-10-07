@@ -1,0 +1,28 @@
+using System;
+using System.Linq;
+using System.Collections.Generic;
+
+
+var products = new List<Product>
+{
+    new("Кофе","Напитки",150,10),
+    new("Чай","Напитки",100,25),
+    new("Сэндвич","Еда",250,5),
+    new("Сок","Напитки",180,8),
+    new("Салат","Еда",200,14),
+};
+
+var stats = products
+    .GroupBy(p => p.Category)
+    .Select(g => new {
+        Category = g.Key,
+        Count = g.Count(),
+        AvgPrice = g.Average(p => p.Price),
+        TotalStock = g.Sum(p => p.Stock),
+        MaxProduct = g.OrderByDescending(p => p.Price).First()
+    });
+
+foreach (var s in stats)
+    Console.WriteLine($"{s.Category}: шт={s.Count}, ср={s.AvgPrice:F1}, остаток={s.TotalStock}, топ={s.MaxProduct.Name} ({s.MaxProduct.Price})");
+
+record Product(string Name, string Category, int Price, int Stock);

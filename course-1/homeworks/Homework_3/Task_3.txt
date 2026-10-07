@@ -1,0 +1,23 @@
+using System;
+using System.Diagnostics.CodeAnalysis;
+
+namespace ConsoleApp1;
+
+class Program
+{
+    static void Main()
+    {
+
+        double num1 = Convert.ToDouble(Console.ReadLine());
+        double num2 = Convert.ToDouble(Console.ReadLine());
+
+        double sum = num1 + num2;
+        double diff = num1 - num2;
+        double prod = num1 * num2;
+        double div = num1 / num2;
+        Console.WriteLine($"Сумма равна {sum}");
+        Console.WriteLine($"Разность равна {diff}");
+        Console.WriteLine($"Произведение равно {prod}");
+        Console.WriteLine($"Частное равно {div}");
+    }
+}

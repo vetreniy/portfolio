@@ -1,0 +1,16 @@
+using System;
+using System.Linq;
+
+string[] a = { "Кофе", "Чай", "Сок" };
+string[] b = { "Чай", "Сэндвич", "Сок" };
+
+var union = a.Union(b);
+var intersect = a.Intersect(b);
+var except = a.Except(b);
+
+Console.WriteLine("Union: " + string.Join(", ", union));
+Console.WriteLine("Intersect: " + string.Join(", ", intersect));
+Console.WriteLine("Except (a-b): " + string.Join(", ", except));
+
+bool same = a.OrderBy(x => x).SequenceEqual(b.OrderBy(x => x));
+Console.WriteLine("Одинаковы ли множества (без учета порядка): " + same);

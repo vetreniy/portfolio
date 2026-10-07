@@ -1,0 +1,54 @@
+using System;
+using System.Linq;
+
+
+
+var studentsClub = new[]
+{
+    new StudentClub("Аня",   "Робототехника"),
+    new StudentClub("Борис", "Шахматы"),
+    new StudentClub("Вика",  "Театр"),
+    new StudentClub("Гена",  "Шахматы"),
+    new StudentClub("Дана",  "Дебаты")
+};
+
+var clubs = new[]
+{
+    new ClubInfo("Шахматы",       "Ауд. 203"),
+    new ClubInfo("Робототехника", "Ауд. 105"),
+    new ClubInfo("Театр",         "Сцена 1")
+};
+
+
+
+var members = studentsClub.Join(
+    inner: clubs,
+    outerKeySelector: s => s.Club,
+    innerKeySelector: c => c.Club,
+    resultSelector: (s, c) => new { s.Name, Club = c.Club, c.Room }
+);
+
+foreach (var m in members)
+    Console.WriteLine($"{m.Name} -- {m.Club} ({m.Room})");
+
+var left = studentsClub
+    .GroupJoin(
+        inner: clubs,
+        outerKeySelector: s => s.Club,
+        innerKeySelector: c => c.Club,
+        resultSelector: (s, cs) => new { s, cs })
+    .SelectMany(
+        sc => sc.cs.DefaultIfEmpty(),
+        (sc, c) => new
+        {
+            sc.s.Name,
+            Club = sc.s.Club,
+            Room = c?.Room ?? "--"
+        });
+
+foreach (var x in left)
+    Console.WriteLine($"{x.Name} -- {x.Club} ({x.Room})");
+
+
+record class StudentClub(string Name, string Club);
+record class ClubInfo(string Club, string Room);

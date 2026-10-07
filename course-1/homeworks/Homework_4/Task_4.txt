@@ -1,0 +1,32 @@
+using System;
+using System.Diagnostics.CodeAnalysis;
+
+namespace ConsoleApp1;
+
+class Program
+{
+    static void Main()
+    {
+        string a = "1234";
+        int atmpts = 0;
+        while (atmpts < 3)
+        {
+            Console.Write("Введите пароль: ");
+            string b = Console.ReadLine();
+            if (a == b)
+            {
+                Console.WriteLine("Доступ разрешён");
+                break;
+            }
+            else
+            {
+                atmpts++;
+
+                if (atmpts == 3)
+                {
+                    Console.WriteLine("Доступ запрещён");
+                }
+            }
+        }
+    }
+}

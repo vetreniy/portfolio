@@ -1,0 +1,35 @@
+using System;
+using System.Diagnostics.CodeAnalysis;
+
+namespace ConsoleApp1;
+
+class Program
+{
+    static void Main()
+    {
+        int[] grades = { 4, 2, 5, 5, 3, 5, 4 };
+
+        int a = 0;
+        int b = 0;
+        double c = 0;
+
+        for (int i = 0; i < grades.Length; i++)
+        {
+            if (grades[i] == 5)
+            {
+                a++;
+            }
+            if (grades[i] == 2)
+            {
+                b++;
+
+            }
+            c += grades[i];
+            
+        }
+        double d = c / 7;
+        Console.WriteLine($"Средний балл равен {d}");
+        Console.WriteLine($"Количество пятёрок равно {a}");
+        Console.WriteLine($"Количество двоек равно {b}");
+    }
+}

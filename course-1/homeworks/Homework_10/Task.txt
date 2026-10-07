@@ -1,0 +1,82 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+
+class Book
+{
+    public string Title { get; set; }
+    public string Author { get; set; }
+}
+
+class Program
+{
+    static void SaveBooks(List<Book> books)
+    {
+        using (var writer = new StreamWriter("books.txt"))
+        {
+            foreach (var book in books)
+            {
+                writer.WriteLine($"{book.Title};{book.Author}");
+            }
+        }
+    }
+
+    static List<Book> LoadBooks()
+    {
+        var books = new List<Book>();
+
+        if (File.Exists("books.txt"))
+        {
+            foreach (var line in File.ReadAllLines("books.txt"))
+            {
+                var parts = line.Split(';');
+                if (parts.Length == 2)
+                {
+                    books.Add(new Book { Title = parts[0], Author = parts[1] });
+                }
+            }
+        }
+
+        return books;
+    }
+
+    static void Main()
+    {
+        List<Book> books = new List<Book>();
+        books = LoadBooks();
+
+        while (true)
+        {
+            Console.WriteLine("\n1. Добавить книгу");
+            Console.WriteLine("2. Показать все книги");
+            Console.WriteLine("3. Выход");
+            Console.Write("Выберите действие: ");
+
+            string choice = Console.ReadLine();
+
+            if (choice == "1")
+            {
+                Console.Write("Введите название: ");
+                string title = Console.ReadLine();
+                Console.Write("Введите автора: ");
+                string author = Console.ReadLine();
+
+                books.Add(new Book { Title = title, Author = author });
+                SaveBooks(books);
+                Console.WriteLine("Книга добавлена!");
+            }
+            else if (choice == "2")
+            {
+                Console.WriteLine("\nСписок книг:");
+                foreach (var book in books)
+                {
+                    Console.WriteLine($"{book.Title} - {book.Author}");
+                }
+            }
+            else if (choice == "3")
+            {
+                break;
+            }
+        }
+    }
+}
